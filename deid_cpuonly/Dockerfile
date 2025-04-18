@@ -35,8 +35,14 @@ RUN conda install pytorch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 cpuonly -
 RUN conda install transformers
 RUN python build.py
 
-
+WORKDIR "/OHNLPTK/configs"
+RUN wget https://raw.githubusercontent.com/OHNLP/OHNLPTK_Docker_Images/refs/heads/main/deid_cpuonly/deid_config.json
 
 WORKDIR "/OHNLPTK"
 RUN mkdir input
 RUN mkdir output
+
+WORKDIR "/OHNLPTK/input"
+RUN wget https://raw.githubusercontent.com/nlpie/nlptab-corpus/refs/heads/master/Documents/97_1677.txt && wget https://github.com/nlpie/nlptab-corpus/blob/master/Documents/100_2456.txt
+
+WORKDIR "/OHNLPTK"
