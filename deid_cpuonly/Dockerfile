@@ -52,6 +52,12 @@ RUN mkdir output
 WORKDIR "/OHNLPTK/input"
 RUN wget https://raw.githubusercontent.com/nlpie/nlptab-corpus/refs/heads/master/Documents/97_1677.txt && wget https://github.com/nlpie/nlptab-corpus/blob/master/Documents/100_2456.txt
 
+# Setup Flink
+RUN wget https://archive.apache.org/dist/flink/flink-1.18.0/flink-1.18.0-bin-scala_2.12.tgz -O flink.tgz && tar -xf flink.tgz
+
 # Prep for run
 WORKDIR "/OHNLPTK"
-RUN chmod +x ./run_pipeline_local.sh && chmod +x ./run_backbone_configurator.sh
+RUN chmod +x ./run_pipeline_local.sh && chmod +x ./run_backbone_configurator.sh && chmod +x ./package_modules_and_configs.sh
+RUN java -cp bin/Plugin-Manager.jar org.ohnlp.backbone.pluginmanager.PluginManager Flink
+
+
