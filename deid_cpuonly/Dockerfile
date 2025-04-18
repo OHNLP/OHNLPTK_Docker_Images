@@ -34,6 +34,7 @@ RUN wget https://raw.githubusercontent.com/OHNLP/PresidioDeidentificationforOHNL
 RUN conda install pytorch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 cpuonly -c pytorch
 RUN conda install transformers
 RUN python build.py
+RUN rm build.py
 
 WORKDIR "/OHNLPTK/configs"
 RUN wget https://raw.githubusercontent.com/OHNLP/OHNLPTK_Docker_Images/refs/heads/main/deid_cpuonly/deid_config.json
