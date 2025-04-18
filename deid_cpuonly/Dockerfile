@@ -46,3 +46,4 @@ WORKDIR "/OHNLPTK/input"
 RUN wget https://raw.githubusercontent.com/nlpie/nlptab-corpus/refs/heads/master/Documents/97_1677.txt && wget https://github.com/nlpie/nlptab-corpus/blob/master/Documents/100_2456.txt
 
 WORKDIR "/OHNLPTK"
+RUN chmod +x ./run_pipeline_local.sh && chmod +x ./run_backbone_configurator.sh
