@@ -120,6 +120,7 @@
     },
     "config" : {
       "fileSystemPath" : "/OHNLPTK/output/medtator_out",
+      "taskName": "NER",
       "note_id_raw_col" : {
         "sourceColumnName" : "note_id",
         "sourceTag" : "*"
