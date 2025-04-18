@@ -1,13 +1,16 @@
+# Basic setup
 FROM ubuntu:latest
 ENV PATH="/root/miniconda3/bin:${PATH}"
 ARG PATH="/root/miniconda3/bin:${PATH}"
 SHELL ["/bin/bash", "-c"]
+# Set up apt, required GNU tools, and JDK
 RUN apt-get update
 
 RUN apt-get install -y wget curl unzip openjdk-17-jdk && rm -rf /var/lib/apt/lists/*
 
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 
+# Set up Anaconda
 RUN wget \
     https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
     && mkdir /root/.conda \
@@ -19,6 +22,7 @@ RUN exec bash \
     && . /root/.bashrc \
     && conda activate
 
+# Set up OHNLPTK and Presidio MOdule
 RUN wget \
     https://raw.githubusercontent.com/OHNLP/OHNLPTK_SETUP/refs/heads/master/install_or_update_ohnlptk.sh \
     && bash install_or_update_ohnlptk.sh
@@ -36,9 +40,11 @@ RUN conda install transformers
 RUN python build.py
 RUN rm build.py
 
+# Get Demo Deidentification Config
 WORKDIR "/OHNLPTK/configs"
 RUN wget https://raw.githubusercontent.com/OHNLP/OHNLPTK_Docker_Images/refs/heads/main/deid_cpuonly/deid_config.json
 
+# Create input/output folders and get demo data
 WORKDIR "/OHNLPTK"
 RUN mkdir input
 RUN mkdir output
@@ -46,5 +52,6 @@ RUN mkdir output
 WORKDIR "/OHNLPTK/input"
 RUN wget https://raw.githubusercontent.com/nlpie/nlptab-corpus/refs/heads/master/Documents/97_1677.txt && wget https://github.com/nlpie/nlptab-corpus/blob/master/Documents/100_2456.txt
 
+# Prep for run
 WORKDIR "/OHNLPTK"
 RUN chmod +x ./run_pipeline_local.sh && chmod +x ./run_backbone_configurator.sh
