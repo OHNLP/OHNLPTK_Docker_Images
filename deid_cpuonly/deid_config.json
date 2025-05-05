@@ -19,7 +19,7 @@
         "sourceColumnName" : "note_text",
         "sourceTag" : "Documents with PII"
       },
-      "ner_model_path" : "obi/deid_roberta_i2b2",
+      "ner_model_path" : "./obi/deid_roberta_i2b2",
       "acceptance_threshold" : 0.35
     },
     "bundleName" : "PresidioDeidentificationforOHNLPTK",
