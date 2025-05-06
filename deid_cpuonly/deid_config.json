@@ -1,6 +1,7 @@
 {
   "id" : "deid_config_docker",
   "description" : "A pipeline configuration that displays all capabilities in the deidentification pipeline",
+  "offlinePythonEnvs": true,
   "pipeline" : [ {
     "lang" : "PYTHON",
     "componentID" : "Identify PII Entities",
