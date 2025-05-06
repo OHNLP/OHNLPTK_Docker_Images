@@ -1,28 +1,27 @@
 # Basic setup
 FROM ubuntu:latest
-ENV PATH="/root/miniconda3/bin:${PATH}"
-ARG PATH="/root/miniconda3/bin:${PATH}"
 SHELL ["/bin/bash", "-c"]
 # Set up apt, required GNU tools, and JDK
 RUN apt-get update
 
-RUN apt-get install -y wget curl unzip openjdk-17-jdk && rm -rf /var/lib/apt/lists/*
+RUN apt-get install -y wget curl unzip openjdk-17-jdk
 
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 
-# Set up Anaconda
-RUN wget \
-    https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
-    && mkdir /root/.conda \
-    && bash Miniconda3-latest-Linux-x86_64.sh -b \
-    && rm -f Miniconda3-latest-Linux-x86_64.sh
+# Set up python/pip and deidentification dependencies
+RUN apt-get install -y python3 python3-pip python3-venv python-is-python3
+RUN python3 -m venv /default-python-env
+RUN /default-python-env/bin/pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+RUN /default-python-env/bin/pip install transformers
+RUN /default-python-env/bin/pip install ohnlptk-xlang-python==1.1.0 presidio-analyzer==2.2.33 presidio-anonymizer==2.2.33
+RUN /default-python-env/bin/pip install charset_normalizer==3.4.0
+RUN /default-python-env/bin/pip install spacy
+RUN /default-python-env/bin/python -m spacy download en_core_web_sm
 
 RUN exec bash \
-    && conda init bash \
-    && . /root/.bashrc \
-    && conda activate
+    && source /default-python-env/bin/activate
 
-# Set up OHNLPTK and Presidio MOdule
+# Set up OHNLPTK and Presidio Mdule
 RUN wget \
     https://raw.githubusercontent.com/OHNLP/OHNLPTK_SETUP/refs/heads/master/install_or_update_ohnlptk.sh \
     && bash install_or_update_ohnlptk.sh
@@ -35,9 +34,8 @@ RUN unzip PresidioDeidentificationForOHNLPTK.zip && rm PresidioDeidentificationF
 WORKDIR "/OHNLPTK/python_resources"
 
 RUN wget https://raw.githubusercontent.com/OHNLP/PresidioDeidentificationforOHNLPTK/refs/heads/master/src/build.py
-RUN conda install pytorch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 cpuonly -c pytorch
-RUN conda install transformers
-RUN python build.py
+
+RUN /default-python-env/bin/python build.py
 RUN rm build.py
 
 # Get Demo Deidentification Config
@@ -60,4 +58,5 @@ RUN wget https://archive.apache.org/dist/flink/flink-1.18.0/flink-1.18.0-bin-sca
 RUN chmod +x ./run_pipeline_local.sh && chmod +x ./run_backbone_configurator.sh && chmod +x ./package_modules_and_configs.sh
 RUN java -cp bin/Plugin-Manager.jar org.ohnlp.backbone.pluginmanager.PluginManager Flink
 
-
+# Cleanup
+RUN rm -rf /var/lib/apt/lists/*
